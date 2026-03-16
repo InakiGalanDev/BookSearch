@@ -10,7 +10,6 @@ class SearchController extends Controller
     {
         $texto = $request->get('texto');
 
-        // leer dataset
         $data = json_decode(file_get_contents(base_path('dataset.json')), true);
 
         $books = [];
@@ -18,7 +17,6 @@ class SearchController extends Controller
 
         foreach ($data as $book) {
 
-            // buscar coincidencias en titulo o autor
             if (
                 stripos($book['titulo'], $texto) !== false ||
                 stripos($book['autor'], $texto) !== false
@@ -27,19 +25,17 @@ class SearchController extends Controller
             }
         }
 
-        // obtener autores únicos
         $authorNames = array_unique(array_column($data, 'autor'));
 
         foreach ($authorNames as $authorName) {
 
             if (stripos($authorName, $texto) !== false) {
 
-                // libros del autor
                 $authorBooks = array_filter($data, function ($book) use ($authorName) {
                     return $book['autor'] === $authorName;
                 });
 
-                // ordenar por fecha_nov desc
+                // ordenar por fecha_nov descendente
                 usort($authorBooks, function ($a, $b) {
                     return $b['fecha_nov'] <=> $a['fecha_nov'];
                 });
